@@ -3,7 +3,7 @@ import oneflow as flow
 import oneflow.typing as oft
 
 def cb(y):
-    print("out", y.ndarray())
+    print("out", y.numpy())
 
 @flow.global_function()
 def ReluJob(x:oft.Numpy.Placeholder((10,))):

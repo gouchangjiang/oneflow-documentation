@@ -4,7 +4,7 @@ import oneflow.typing as oft
 
 def get_cb(bn):
     def cb(x):
-        blob = x.ndarray()
+        blob = x.numpy()
         print(bn, blob.shape, blob.dtype)
         #print(blob)
     return cb
