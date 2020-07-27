@@ -1,12 +1,11 @@
 import numpy as np
 import oneflow as flow
-import oneflow.typing as oft
 
 def cb(y):
     print("out", y.numpy())
 
 @flow.global_function()
-def ReluJob(x:oft.Numpy.Placeholder((10,))):
+def ReluJob(x=flow.FixedTensorDef((10,))) -> None:
     y = flow.nn.relu(x)
     flow.watch(y, cb)
 

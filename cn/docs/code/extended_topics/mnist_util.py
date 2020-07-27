@@ -3,6 +3,7 @@ import os
 import urllib
 import urllib.request
 import hashlib
+import oneflow as flow
 
 # sha256:63d4344077849053dc3036b247fa012b2b381de53fd055a66b539dffd76cf08e
 mnist_file_url = 'https://oneflow-public.oss-cn-beijing.aliyuncs.com/datasets/mnist.npz'
@@ -80,7 +81,7 @@ def load_data(train_batch_size=100, test_batch_size=100, data_format='NCHW'):
 
 
 if __name__ == "__main__":
-    (x_train, y_train), (x_test, y_test) = load_data()
+    (x_train, y_train), (x_test, y_test) = flow.data.load_mnist()
 
     print(x_train.shape,
           y_train.shape,
