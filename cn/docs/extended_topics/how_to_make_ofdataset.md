@@ -167,7 +167,7 @@ def ofrecord_reader(
 
 * 在 spark 官网下载[spark-2.4.0-bin-hadoop2.7](https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz)
 
-* 在[这里](https://oneflow-static.oss-cn-beijing.aliyuncs.com/oneflow-tutorial-attachments/spark-oneflow-connector-assembly-0.1.0_int64.jar)下载 jar 包，spark 需要它来支持 ofrecord 格式
+* 在[这里](https://oneflow-public.oss-cn-beijing.aliyuncs.com/tools/spark-oneflow-connector-assembly-0.1.1.jar)下载 jar 包，spark 需要它来支持 ofrecord 格式
 
 接着，解压 `spark-2.4.0-bin-hadoop2.7.tgz`，并配置环境变量 `SPARK_HOME`:
 ```shell
