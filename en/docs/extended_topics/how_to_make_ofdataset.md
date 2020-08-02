@@ -263,7 +263,7 @@ At first, we should download Spark and Spark-oneflow-connector：
 
 * Download the [spark-2.4.0-bin-hadoop2.7](https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz) from the official website of Spark
 
-* Download jar package at [there](https://oneflow-public.oss-cn-beijing.aliyuncs.com/tools/spark-oneflow-connector-assembly-0.1.1.jar), which Spark needs to support the ofrecord file format
+* Download jar package at [here](https://oneflow-public.oss-cn-beijing.aliyuncs.com/tools/spark-oneflow-connector-assembly-0.1.1.jar),  or find in [spark-oneflow-connector relase](https://github.com/Oneflow-Inc/spark-oneflow-connector/releases/tag/0.1.1), which Spark needs to support the ofrecord file format
 
 Then, unzip the `spark-2.4.0-bin-hadoop2.7.tgz` and configure the environment variable `SPARK_HOME`:
 
@@ -275,7 +275,7 @@ Here we can launch the pyspark shell with the following command：
 
 ```shell
 pyspark --master "local[*]"\
- --jars spark-oneflow-connector-assembly-0.1.0_int64.jar\
+ --jars spark-oneflow-connector-assembly-0.1.1.jar\
  --packages org.tensorflow:spark-tensorflow-connector_2.11:1.13.1
 ```
 
