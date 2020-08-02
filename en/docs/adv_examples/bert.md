@@ -16,21 +16,32 @@ BERT在实际应用中往往分为两步：
 
 ## 快速开始
 ### 获取相关数据集
-我们提供了完成BERT预训练及SQuAD微调的[OFRecord数据集及相关数据文件](https://oneflow-static.oss-cn-beijing.aliyuncs.com/oneflow-tutorial-attachments/bert_squad_dataset.zip)，可以通过以下命令下载并解压：
+我们提供了完成BERT预训练及SQuAD微调的[OFRecord数据集及相关数据文件](https://oneflow-public.oss-cn-beijing.aliyuncs.com/datasets/squad_dataset_tools.tgz)，可以通过以下命令下载并解压：
 
 ```bash
-wget https://oneflow-static.oss-cn-beijing.aliyuncs.com/oneflow-tutorial-attachments/bert_squad_dataset.zip
-unzip bert_squad_dataset.zip
+wget https://oneflow-public.oss-cn-beijing.aliyuncs.com/datasets/squad_dataset_tools.tgz 
+tar -zxvf squad_dataset_tools.tgz
 ```
 解压后的文件目录清单如下：
-
-* bert_config.json、vocab.txt：制作prediction json文件需要的文件，来自[google bert](https://github.com/google-research/bert)
-
-* dev-v1.1/、dev-v1.1.json：SQuAD检验集，用于打分
-
-* part-0：预训练集样本（40个样本）
-
-* train-v1.1：SQuAD训练集，已经转为ofrecord数据集格式
+```shell
+squad_dataset_tools
+├── dev-v1.1.json
+├── dev-v2.0.json
+├── evaluate-v1.1.py
+├── evaluate-v2.0.py
+├── ofrecord
+│   ├── dev-v1.1
+│   │   └── part-0
+│   ├── dev-v2.0
+│   │   └── part-0
+│   ├── README.md
+│   ├── train-v1.1
+│   │   └── part-0
+│   └── train-v2.0
+│       └── part-0
+├── train-v1.1.json
+└── train-v2.0.json
+```
 
 以上各个文件将在下文的预训练任务、SQuAD微调中使用到。
 

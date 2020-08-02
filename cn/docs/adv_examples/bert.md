@@ -1,11 +1,11 @@
 
 ## 模型概述
-BERT(Bidirectional Encoder Representations from Transformers)是NLP领域的一种新型预训练模型。本案例中，基于论文[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)实现了BERT模型的OneFlow版本。
+BERT(Bidirectional Encoder Representations from Transformers)是NLP领域的一种新型预训练模型。本案例中，基于论文[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)实现了BERT模型的OneFlow版本。本案例中，基于论文[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://arxiv.org/abs/1810.04805)实现了BERT模型的OneFlow版本。
 
 ### 模型架构
 | **Model** | **Hidden layers** | **Hidden unit size** | **Attention heads** | **Feedforward filter size** | **Max sequence length** | **Parameters** |
-|:---------:|:----------:|:----:|:---:|:--------:|:---:|:----:|
-|BERTBASE |12 encoder| 768| 12|4 x  768|512|110M|
+|:---------:|:-----------------:|:--------------------:|:-------------------:|:---------------------------:|:-----------------------:|:--------------:|
+| BERTBASE  |    12 encoder     |         768          |         12          |          4 x  768           |           512           |      110M      |
 
 BERT在实际应用中往往分为两步：
 
@@ -16,21 +16,32 @@ BERT在实际应用中往往分为两步：
 
 ## 快速开始
 ### 获取相关数据集
-我们提供了完成BERT预训练及SQuAD微调的[OFRecord数据集及相关数据文件](https://oneflow-static.oss-cn-beijing.aliyuncs.com/oneflow-tutorial-attachments/bert_squad_dataset.zip)，可以通过以下命令下载并解压：
+我们提供了完成BERT预训练及SQuAD微调的[OFRecord数据集及相关数据文件](https://oneflow-public.oss-cn-beijing.aliyuncs.com/datasets/squad_dataset_tools.tgz)，可以通过以下命令下载并解压：
 
 ```bash
-wget https://oneflow-static.oss-cn-beijing.aliyuncs.com/oneflow-tutorial-attachments/bert_squad_dataset.zip
-unzip bert_squad_dataset.zip
+wget https://oneflow-public.oss-cn-beijing.aliyuncs.com/datasets/squad_dataset_tools.tgz 
+tar -zxvf squad_dataset_tools.tgz
 ```
 解压后的文件目录清单如下：
-
-* bert_config.json、vocab.txt：制作prediction json文件需要的文件，来自[google bert](https://github.com/google-research/bert)
-
-* dev-v1.1/、dev-v1.1.json：SQuAD检验集，用于打分
-
-* part-0：预训练集样本（40个样本）
-
-* train-v1.1：SQuAD训练集，已经转为ofrecord数据集格式
+```shell
+squad_dataset_tools
+├── dev-v1.1.json
+├── dev-v2.0.json
+├── evaluate-v1.1.py
+├── evaluate-v2.0.py
+├── ofrecord
+│   ├── dev-v1.1
+│   │   └── part-0
+│   ├── dev-v2.0
+│   │   └── part-0
+│   ├── README.md
+│   ├── train-v1.1
+│   │   └── part-0
+│   └── train-v2.0
+│       └── part-0
+├── train-v1.1.json
+└── train-v2.0.json
+```
 
 以上各个文件将在下文的预训练任务、SQuAD微调中使用到。
 
@@ -72,8 +83,7 @@ python ./run_pretraining.py\
 我们将获得类似以下输出：
 ```text
 ==================================================================
-Running bert: num_gpu_per_node = 1, num_nodes = 1.
-==================================================================
+Running bert: num_gpu_per_node = 1, num_nodes = 1. ==================================================================
 gpu_num_per_node = 1
 node_num = 1
 node_list = None
@@ -111,29 +121,27 @@ iter 4, total_loss: 11.032, mlm_loss: 10.281, nsp_loss: 0.751, speed: 33.086(sec
 iter 9, total_loss: 11.548, mlm_loss: 10.584, nsp_loss: 0.965, speed: 0.861(sec/batch), 5.806(sentences/sec)
 iter 14, total_loss: 10.697, mlm_loss: 10.249, nsp_loss: 0.448, speed: 0.915(sec/batch), 5.463(sentences/sec)
 iter 19, total_loss: 10.685, mlm_loss: 10.266, nsp_loss: 0.419, speed: 1.087(sec/batch), 4.602(sentences/sec)
-Saving model to ./bert_regresssioin_test/of/last_snapshot.
-------------------------------------------------------------------
+Saving model to ./bert_regresssioin_test/of/last_snapshot. ------------------------------------------------------------------
 average speed: 0.556(sentences/sec)
 ------------------------------------------------------------------
 ```
 
 ## 详细说明
 ### 脚本说明
-| **分类** | **说明** | **所属**|
-|:---------:|:----------:|:----------:|
-|pretrain.py、bert.py|定义了BERT网络模型；|BERT|
-|run_pretraining.py|启动BERT训练的用户脚本，用户通过命令行参数进行BERT训练的训练环境及超参配置，各个参数的具体作用将在下文 **脚本参数** 中说明。| BERT|
-|squad.py|定义了squad网络；|SQuAD|
-|run_squad.py|用于启动SQuAD的训练|SQuAD|
-|run_squad_predict.py|使用训练好的SQuAD模型进行预测|SQuAD|
-|npy2json.py|将OneFlow的预测结果转化为prediction json格式的必要脚本|SQuAD|
-|convert_tf_ckpt_to_of.py|将TensorFlow模型转为OneFlow个模型格式|BERT/SQuAD|
+|            **分类**            |                                **说明**                                 |   **所属**   |
+|:----------------------------:|:---------------------------------------------------------------------:|:----------:|
+|     pretrain.py、bert.py      |                             定义了BERT网络模型；                              |    BERT    |
+|      run_pretraining.py      | 启动BERT训练的用户脚本，用户通过命令行参数进行BERT训练的训练环境及超参配置，各个参数的具体作用将在下文 **脚本参数** 中说明。 |    BERT    |
+|           squad.py           |                              定义了squad网络；                              |   SQuAD    |
+|         run_squad.py         |                             用于启动SQuAD的训练                              |   SQuAD    |
+|    run_squad_predict.py    |                           使用训练好的SQuAD模型进行预测                           |   SQuAD    |
+|         npy2json.py          |                将OneFlow的预测结果转化为prediction json格式的必要脚本                 |   SQuAD    |
+| convert_tf_ckpt_to_of.py |                      将TensorFlow模型转为OneFlow个模型格式                      | BERT/SQuAD |
 
 
 
 ### 脚本参数
-`run_pretraining.py`通过命令行参数配置包括超参在内的训练环境，可以通过
-`run_pretraining.py --help`查看，以下是这些参数作用的具体说明：
+`run_pretraining.py`通过命令行参数配置包括超参在内的训练环境，可以通过 `run_pretraining.py --help`查看，以下是这些参数作用的具体说明：
 
 * gpu_num_per_node： 每个节点上GPU的数目，OneFlow要求每个节点的GPU数目必须一致
 
@@ -181,25 +189,25 @@ average speed: 0.556(sentences/sec)
 
 * max_position_embeddings：
 
-* type_vocab_size 
+* type_vocab_size
 
-* vocab_size 
+* vocab_size
 
-* attention_probs_dropout_prob 
+* attention_probs_dropout_prob
 
 * hidden_dropout_prob
 
-* hidden_size_per_head 
+* hidden_size_per_head
 
 ### 使用完整的Wikipedia + BookCorpus数据集
 如果需要无到有进行BERT的pretrain训练，则需要使用较大的训练集。
 
-如果感兴趣，可以通过[google-research BERT](https://github.com/google-research/bert)的页面，下载tfrecord格式的数据集。再根据[加载与准备OFRecord数据集](../extended_topics/how_to_make_ofdataset.md)中的方法，将TFRecord数据转为OFRecord数据集使用。
+如果感兴趣，可以通过[google-research BERT](https://github.com/google-research/bert)的页面，下载tfrecord格式的数据集。再根据[加载与准备OFRecord数据集](../extended_topics/how_to_make_ofdataset.md)中的方法，将TFRecord数据转为OFRecord数据集使用。再根据[加载与准备OFRecord数据集](../extended_topics/how_to_make_ofdataset.md)中的方法，将TFRecord数据转为OFRecord数据集使用。
 
 ### 将Tensorflow的BERT模型转为OneFlow模型格式
 如果想直接使用已经训练好的pretrained模型做fine-tune任务（如以下将展示的SQuAD），可以考虑直接从[google-research BERT](https://github.com/google-research/bert)页面下载已经训练好的BERT模型。
 
-再利用我们提供的`convert_tf_ckpt_to_of.py`脚本，将其转为OneFlow模型格式。转换过程如下：
+再利用我们提供的`convert_tf_ckpt_to_of.py`脚本，将其转为OneFlow模型格式。转换过程如下：转换过程如下：
 
 首先，下载并解压某个版本的BERT模型，如`uncased_L-12_H-768_A-12`。
 ```shell
@@ -245,9 +253,8 @@ python convert_tf_ckpt_to_of.py \
 我们只需要在BERT的backbone基础上，加上一层`output`层，并修改loss的表达式即可，完整的代码可以查看`squad.py`脚本，以下是几处关键修改：
 ```python
 def SQuADTrain():
-    #...
-    backbone = bert_util.BertBackbone()
-    
+    #... backbone = bert_util.BertBackbone()
+
     #在BERT的基础上加上一个全连接层
     with flow.name_scope("cls-squad"):
         final_hidden = backbone.sequence_output()
@@ -310,7 +317,7 @@ cp -R --remove-destination ./dataset/uncased_L-12_H-768_A-12_oneflow/* ./squadMo
 ```
 
 ### OneFlow预训练模型的训练次数问题
-OneFlow生成的模型目录中，会有一个名为`System-Train-TrainStep-xxx`的子目录(xxx为作业函数的函数名)，该子目录下的out文件中，保存有训练总迭代数，并且这个迭代数会用于动态调节训练过程的`learning rate`。
+OneFlow生成的模型目录中，会有一个名为`System-Train-TrainStep-xxx`的子目录(xxx为任务函数的函数名)，该子目录下的out文件中，保存有训练总迭代数，并且这个迭代数会用于动态调节训练过程的`learning rate`。
 
 为了防止保存的迭代数影响到微调的训练，应该将out文件中的二进制数据清零：
 ```shell
