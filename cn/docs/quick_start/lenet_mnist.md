@@ -133,6 +133,7 @@ OneFlow 中提供了 `oneflow.global_function` 装饰器，通过它，可以将
 def train_job(
     images: tp.Numpy.Placeholder((BATCH_SIZE, 1, 28, 28), dtype=flow.float),
     labels: tp.Numpy.Placeholder((BATCH_SIZE,), dtype=flow.int32),
+) -> tp.Numpy:
     #作业函数实现 ...
 ```
 
