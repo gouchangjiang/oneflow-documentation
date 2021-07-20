@@ -38,13 +38,13 @@ Key features:
 OneFlow consists of two stages: Compile-time and Runtime. In the Compile-time, user-defined neural networks and the requested resource are compiled into a static graph execution plan, which is composed of the description of the basic execution unit `Actor`; During the runtime , each machine actually creates many Actor instances located to its own machine based on the Actor description in the Plan, and then started the Actor operating system. In the training procedure, the basic unit of OneFlow execution is Actor, which corresponds to a node of the static execution graph. The data produced and consumed between Actors are stored in the form of `Registers`, and the Actors cooperate through message passing.
 
 ### Decentralized scheduling
-OneFlow implements decentralized scheduling through the Actor mechanism. In the entire static graph is composed of actors, there is no central scheduler. Each actor only cares about the producer of the data it needs (upstream Actor) and the consumer of the data it produces (downstream Actor). In this way, in the ultra-large-scale distributed training scenario, **completely decentralized scheduling** can avoid the single-point performance bottleneck with centralized scheduling.
+OneFlow implements decentralized scheduling through the Actor mechanism. The entire static graph is composed of actors, hence there is no central scheduler. Each actor only cares about the producer of the data it needs (upstream Actors) and the consumer of the data it produces (downstream Actors). In this way, in the ultra-large-scale distributed training scenario, **completely decentralized scheduling** can avoid the single-point performance bottleneck with centralized scheduling.
 
 Each Actor has an internal state machine, which updates its status according to the messages sent and received by the Actor. It should be noted that Register is a storage block, which stores the data produced by the Actor, and the message is a lightweight data containing the memory address of the Register storage block. It is message instead of Register that is passed between Actors, in this way, OneFlow runtime achieves zero-copy.
 
-When an Actor receives a new message and decides whether the Register it needs to consume is ready, and it has free Register to write the produced data. If yes, the Actor executes (Act) once and produces some new data.
+When an Actor receives a new message, and if both the input and output Registers are available, then the Actor executes (acts) once and produces some new data.
 
-After action, the Actor sends a message to the consumer Actors who need to consume the produced Register, indicating that "you can read the data I produced"; At the same time, the Actor also needs to return the Register it consumes to its producer, indicating that "I have used up your data and you can recycle it." The state machine inside the Actor is shown in Figure 1.
+After action, the Actor sends a message to the consumer Actors who need to consume the produced Register, indicating that "you can read the data I produced"; At the same time, the Actor also needs to return the Register it consumes to its producer, indicating that "I have received your data and you can recycle it." The state machine inside the Actor is shown in Figure 1.
 
 <div align="center">
     <img src="imgs/actor_state_machine.png" align='center'/>
@@ -60,21 +60,21 @@ The messages received by an Actor are generally divided into several types:
 
 * The upstream producer Actor sends a message saying that you can read the data I produce;
 
-* the downstream consumer Actor sends a message saying that I have used up the data you produced.
+* the downstream consumer Actor sends a message saying that I received the data you produced.
 
-When this data are used up by all consumers, it can be recycled as a free block and wait for the Actor to produce a new data in next time.
+When this data are received by all consumers, it can be recycled as a free block and wait for the Actor to produce a new data in next time.
 
 Whenever receiving a message, an Actor will try to decides whether its action conditions are met with. There are generally two action conditions:
 
-* Whether all the data to be read are available;
+* Whether all the input data is available;
 
-* Whether there are free blocks that can be used for production. When the action state is satisfied, the actor starts to launch its internal Kernel to consume incoming data and produce some new data.
+* Whether there are free blocks that can be used for output. When the action state is satisfied, the actor starts to launch its internal Kernel to consume input data and produce some new data.
 
-After action, the Actor will send messages to upstream and downstream:
+After action, the Actor will send messages to upstreams and downstreams:
 
 * Send a message to the downstream consumer Actor saying that I just produced a piece of data, you can read them;
 
-* Send a message to the upstream producer Actor saying that I just used up the data you sent me before.
+* Send a message to the upstream producer Actor saying that I just received the data you sent me before.
 
 Actors only need to care about upstream and downstream messages to decide whether they can act or not. All Actors form a **completely decentralized** distributed collaborative network through their own internal state machines and messages exchanging mechanism.
 
@@ -86,7 +86,7 @@ In above, we introduced the internal finite state machine of Actors. Message pas
 
 * Whether the Registers produced by itself have free blocks to write.
 
-For a Register, if we allocate multiple free blocks for it, two adjacent Actors can work simultaneously. In this way, the overlapping of adjacent actors implements pipelining. In an ideal case, the `initiation interval` of the entire static execution graph is the execution time of the bottleneck actor's each action, the execution time of all the other actors will be hidden through the pipelining.
+For a Register, if we allocate multiple free blocks for it, two adjacent Actors can work simultaneously. In this way, the overlapping of adjacent actors implements pipelining. In an ideal case, the `initiation interval` of the entire static execution graph is the execution time of the bottleneck actor's each action, the execution time of all other actors will be hidden by the pipelining.
 
 Let's take an example to explain how the pipelining of the Actor system works. Figure 2 is an execution sequence diagram of a computation graph composed of 3 Actors (a, b, c). The green Regst square represents the Register block being occupied, and the white Regst square represents the free block of the same Register.
 
